@@ -24,8 +24,9 @@
     <script>
         //https://api.twelvedata.com/time_series?start_date=2020-05-06&symbol=aapl,QQQ,EUR/USD,IXIC&interval=15min&apikey=
         // All the code for the JS Stock Chart will come here
-        const key = ""
-        const jsonUrl = "https://api.twelvedata.com/time_series?start_date=2020-05-06&symbol=aapl&interval=15min&apikey=" + "demo";
+        const key = "3651c4761dc74a2e91484a314f11f0d9"
+        // const jsonUrl = "https://api.twelvedata.com/time_series?start_date=2020-05-06&symbol=aapl&interval=15min&apikey=" + "demo";
+        const jsonUrl = "https://api.twelvedata.com/time_series?start_date=2020-05-06&symbol=aapl&interval=15min&apikey=" + key;
         const jsonUrl1 = "https://cdn.anychart.com/samples/stock-general-features/load-json-data/data.json"
         const csvUrl = "https://gist.githubusercontent.com/shacheeswadia/cd509e0b0c03964ca86ae7d894137043/raw/5f336c644ad61728dbac93026f3268b86b8d0680/teslaDailyData.csv"
         anychart.onDocumentReady(function () {
@@ -55,6 +56,24 @@
 
                 // create first plot on the chart
                 var plot = chart.plot(0);
+
+                chart.plot(0).ema(mapping, 13, "line");
+
+                // bollinger bands
+                let bb = chart.plot(0).bbands(mapping, 21, 2, "line", "line", "line");
+                // color the series
+                bb.upperSeries().stroke('#bf360c');
+                bb.middleSeries().stroke('#ff6600');
+                bb.lowerSeries().stroke('#bf360c');
+                bb.rangeSeries().fill('#ffd54f 0.2');
+
+                // macd 
+                let macd = chart.plot(1).macd(mapping, 12, 26, 9);
+                macd.macdSeries().stroke('#bf360c');
+                macd.signalSeries().stroke('#ff6d00');
+                macd.histogramSeries().fill('#ffe082');
+
+                window.localStorage.setItem("chart", chart)
 
 
                 // set grid settings
@@ -90,7 +109,12 @@
                 
                 // initiate chart drawing
                 chart.draw();
-            
+                
+                var objJson = chart.saveAsJson();
+                for (let key in chart) {
+                  console.log(key, chart[key]);
+                }
+                
             }
         );
         }); 
